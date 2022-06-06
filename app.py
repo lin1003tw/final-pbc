@@ -52,6 +52,8 @@ def callback():
  
 #訊息傳遞區塊
 ##### 基本上程式編輯都在這個function #####
+
+# 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = text = event.message.text
@@ -113,7 +115,11 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, flex_message)
     else:
         result = event.postback.data[2:].split('&')
+# 蕭
 
+# 妤
+
+# 効
 
 # 主程式
 if __name__ == "__main__":
