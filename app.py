@@ -119,7 +119,190 @@ def handle_message(event):
 
 # 妤
 
-# 効
+# 効 Review Part
+# input
+
+# 心情標籤 Dict
+mood_dict ={0:'歡樂', 1:'憂鬱', 2:'低調', 3:'奢侈', 4:'活力', 5:'慵懶'}
+
+# 以每間 hotels & bars 編號，建list
+# 心情類別[評論數(預設為0),心情編號(0-5)] list
+mood_list = []
+
+for mood in range(6): # 假設有六種心情
+    mood_list.append([0, mood])
+
+# hotels 1371間，編號0-1370
+hotel_list = []
+
+for hotel in range(1514):
+	hotel_list.append([hotel, mood_list])
+
+# bars 1513間，編號0-1512
+bar_list = []
+
+for bar in range(1514):
+	bar_list.append([bar, mood_list])
+
+# 三個變數都是系統要自動記錄
+
+where = int(input()) # 0 for hotels(預設), 1 for bars, others for both，系統要在使用者去了飯店或酒吧後紀錄他去了哪裡
+hotel = int(input()) # hotel 編號，系統紀錄使用者去了哪間飯店
+bar = int(input()) # bar 編號，系統紀錄使用者去了哪間酒吧，沒去就隨便紀
+
+
+
+# operation 評論紀錄系統
+answer_more_than_one = 0
+mood_review_h = 999
+mood_review_b = 999
+line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='評論可以拿優惠券喔'))
+
+# 因為Line Bot 有限制選項數目，所以拆成兩倆＋略過，共三組選項問使用者
+if where == 0: # 只去了飯店
+
+# 三組心情選項
+    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
+        confirm_template_message = TemplateSendMessage(
+            alt_text = '給一組心情選項',
+            template = ConfirmTemplate(
+                text = '這間飯店給你的感覺偏向？',
+                action = [
+                    PostbackAction(
+                        label = mood_dict[times],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = 0
+                    ),
+                    PostbackAction(
+                        label = mood_dict[times + 1],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = 1
+                    ),
+                    PostbackAction(
+                        label = '略過',
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = 999
+                    ),
+                ]
+            )
+        )
+
+        if mood_review_h < 6: # if 要評論， mood_review 只會有0-5的 int
+            hotel_list[hotel][1][mood_review_h][0] += 1
+            answer_more_than_one += 1
+            # 使用者編號下的貢獻分數加一，還沒寫
+        '''else:
+            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='剛剛錯過了W hotel 免費入住一晚兌換券，真可惜')) # 也可以什麼都不講'''
+
+elif where == 1: # 只去了酒吧
+
+# 三組心情選項
+    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
+        confirm_template_message = TemplateSendMessage(
+            alt_text = '給一組心情選項',
+            template = ConfirmTemplate(
+                text = '這間酒吧給你的感覺偏向？',
+                action = [
+                    PostbackAction(
+                        label = mood_dict[times],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = times 
+                    ),
+                    PostbackAction(
+                        label = mood_dict[times + 1],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = times + 1
+                    ),
+                    PostbackAction(
+                        label = '略過',
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = 999
+                    ),
+                ]
+            )
+        )
+
+
+        if mood_review_b < 6: # if 要評論， mood_review 只會有0-5的 int
+            bar_list[bar][1][mood_review_b][0] += 1
+            answer_more_than_one += 1
+            # 使用者編號下的貢獻分數加一，還沒寫
+        '''else:
+            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='你剛剛錯過了免費調酒兌換券，真可惜')) # 也可以什麼都不講'''
+
+else: # 去了飯店＋酒吧
+
+# 三組心情選項
+    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
+        confirm_template_message = TemplateSendMessage(
+            alt_text = '給一組心情選項',
+            template = ConfirmTemplate(
+                text = '這間飯店給你的感覺偏向？',
+                action = [
+                    PostbackAction(
+                        label = mood_dict[times],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = times
+                    ),
+                    PostbackAction(
+                        label = mood_dict[times + 1],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = times + 1
+                    ),
+                    PostbackAction(
+                        label = '略過',
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = 999
+                    ),
+                ]
+            )
+        )
+
+        if mood_review_h < 6: # if 要評論， mood_review 只會有0-5的 int
+            hotel_list[hotel][1][mood_review_h][0] += 1
+            answer_more_than_one += 1
+            # 使用者編號下的貢獻分數加一，還沒寫
+        '''else:
+            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='剛剛錯過了W hotel 免費入住一晚兌換券，真可惜')) # 也可以什麼都不講'''
+
+# 三組心情選項
+    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
+        confirm_template_message = TemplateSendMessage(
+            alt_text = '給一組心情選項',
+            template = ConfirmTemplate(
+                text = '這間酒吧給你的感覺偏向？',
+                action = [
+                    PostbackAction(
+                        label = mood_dict[times],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = times
+                    ),
+                    PostbackAction(
+                        label = mood_dict[times + 1],
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = times + 1
+                    ),
+                    PostbackAction(
+                        label = '略過',
+                        display_text = '', #看有沒有要回覆訊息
+                        mood_review_h = 999
+                    ),
+                ]
+            )
+        )
+
+
+        if mood_review_b < 6: # if 要評論， mood_review 只會有0-5的 int
+            bar_list[bar][1][mood_review_b][0] += 1
+            answer_more_than_one += 1
+            # 使用者編號下的貢獻分數加一，還沒寫
+        '''else:
+            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='你剛剛錯過了免費調酒兌換券，真可惜')) # 也可以什麼都不講'''
+
+if answer_more_than_one >= 1:
+    line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='感謝您的回答'))
+else:
+    line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='下次記得評論喔！'))
 
 # 主程式
 if __name__ == "__main__":
