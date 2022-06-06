@@ -192,8 +192,6 @@ if where == 0: # 只去了飯店
             hotel_list[hotel][1][mood_review_h][0] += 1
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
-        '''else:
-            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='剛剛錯過了W hotel 免費入住一晚兌換券，真可惜')) # 也可以什麼都不講'''
 
 elif where == 1: # 只去了酒吧
 
@@ -228,8 +226,7 @@ elif where == 1: # 只去了酒吧
             bar_list[bar][1][mood_review_b][0] += 1
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
-        '''else:
-            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='你剛剛錯過了免費調酒兌換券，真可惜')) # 也可以什麼都不講'''
+
 
 else: # 去了飯店＋酒吧
 
@@ -263,8 +260,6 @@ else: # 去了飯店＋酒吧
             hotel_list[hotel][1][mood_review_h][0] += 1
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
-        '''else:
-            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='剛剛錯過了W hotel 免費入住一晚兌換券，真可惜')) # 也可以什麼都不講'''
 
 # 三組心情選項
     for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
@@ -297,8 +292,6 @@ else: # 去了飯店＋酒吧
             bar_list[bar][1][mood_review_b][0] += 1
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
-        '''else:
-            line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='你剛剛錯過了免費調酒兌換券，真可惜')) # 也可以什麼都不講'''
 
 if answer_more_than_one >= 1:
     line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='感謝您的回答'))
