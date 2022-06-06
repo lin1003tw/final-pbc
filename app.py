@@ -166,7 +166,7 @@ if where == 0: # 只去了飯店
     for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
         confirm_template_message = TemplateSendMessage(
             alt_text = '給一組心情選項',
-            template = ConfirmTemplate(
+            template = ButtonsTemplate(
                 text = '這間飯店給你的感覺偏向？',
                 action = [
                     MessageTemplateAction(
@@ -199,7 +199,7 @@ elif where == 1: # 只去了酒吧
     for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
         confirm_template_message = TemplateSendMessage(
             alt_text = '給一組心情選項',
-            template = ConfirmTemplate(
+            template = ButtonsTemplate(
                 text = '這間酒吧給你的感覺偏向？',
                 action = [
                     MessageTemplateAction(
@@ -234,7 +234,7 @@ else: # 去了飯店＋酒吧
     for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
         confirm_template_message = TemplateSendMessage(
             alt_text = '給一組心情選項',
-            template = ConfirmTemplate(
+            template = ButtonsTemplate(
                 text = '這間飯店給你的感覺偏向？',
                 action = [
                     MessageTemplateAction(
@@ -265,7 +265,7 @@ else: # 去了飯店＋酒吧
     for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
         confirm_template_message = TemplateSendMessage(
             alt_text = '給一組心情選項',
-            template = ConfirmTemplate(
+            template = ButtonsTemplate(
                 text = '這間酒吧給你的感覺偏向？',
                 action = [
                     MessageTemplateAction(
