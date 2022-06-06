@@ -115,7 +115,7 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, flex_message)
     else:
         result = event.postback.data[2:].split('&')
-'''	
+	
 # 蕭
 
 # 妤
@@ -304,7 +304,7 @@ if answer_more_than_one >= 1:
     line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='感謝您的回答'))
 else:
     line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='下次記得評論喔！'))
-'''
+
 # 主程式
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
