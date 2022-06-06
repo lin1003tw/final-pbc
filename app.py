@@ -171,17 +171,17 @@ if where == 0: # 只去了飯店
                 action = [
                     MessageTemplateAction(
                         label = mood_dict[times],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = 0
                     ),
                     MessageTemplateAction(
                         label = mood_dict[times + 1],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = 1
                     ),
                     MessageTemplateAction(
                         label = '略過',
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
                     ),
                 ]
@@ -204,17 +204,17 @@ elif where == 1: # 只去了酒吧
                 action = [
                     MessageTemplateAction(
                         label = mood_dict[times],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = times 
                     ),
                     MessageTemplateAction(
                         label = mood_dict[times + 1],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = times + 1
                     ),
                     MessageTemplateAction(
                         label = '略過',
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
                     ),
                 ]
@@ -244,12 +244,12 @@ else: # 去了飯店＋酒吧
                     ),
                     MessageTemplateAction(
                         label = mood_dict[times + 1],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = times + 1
                     ),
                     MessageTemplateAction(
                         label = '略過',
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
                     ),
                 ]
@@ -270,17 +270,17 @@ else: # 去了飯店＋酒吧
                 action = [
                     MessageTemplateAction(
                         label = mood_dict[times],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = times
                     ),
                     MessageTemplateAction(
                         label = mood_dict[times + 1],
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = times + 1
                     ),
                     MessageTemplateAction(
                         label = '略過',
-                        display_text = '', #看有沒有要回覆訊息
+                        text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
                     ),
                 ]
