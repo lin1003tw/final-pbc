@@ -169,17 +169,17 @@ if where == 0: # 只去了飯店
             template = ConfirmTemplate(
                 text = '這間飯店給你的感覺偏向？',
                 action = [
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = 0
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times + 1],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = 1
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = '略過',
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
@@ -202,17 +202,17 @@ elif where == 1: # 只去了酒吧
             template = ConfirmTemplate(
                 text = '這間酒吧給你的感覺偏向？',
                 action = [
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = times 
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times + 1],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = times + 1
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = '略過',
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
@@ -237,17 +237,17 @@ else: # 去了飯店＋酒吧
             template = ConfirmTemplate(
                 text = '這間飯店給你的感覺偏向？',
                 action = [
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = times
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times + 1],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = times + 1
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = '略過',
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
@@ -268,17 +268,17 @@ else: # 去了飯店＋酒吧
             template = ConfirmTemplate(
                 text = '這間酒吧給你的感覺偏向？',
                 action = [
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = times
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = mood_dict[times + 1],
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = times + 1
                     ),
-                    PostbackAction(
+                    MessageTemplateAction(
                         label = '略過',
                         display_text = '', #看有沒有要回覆訊息
                         mood_review_h = 999
