@@ -73,11 +73,6 @@ def handle_message(event):
                         display_text='旅館',
                         data='A旅館'
                     ),
-                    PostbackTemplateAction(
-                        label='全都要',
-                        display_text='全都要',
-                        data='A全都要'
-                    )
                 ]
             )
         )
