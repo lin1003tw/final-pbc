@@ -52,40 +52,42 @@ def callback():
  
 #訊息傳遞區塊
 ##### 基本上程式編輯都在這個function #####
-
-# 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = text = event.message.text
-    if re.match('開始', message):
-        buttons_template_message = TemplateSendMessage(
+    if isinstance(event, MessageEvent):
+        if event.message.text == "開始":
+            buttons_template_message = TemplateSendMessage(
             alt_text='這個看不到',
             template=ButtonsTemplate(
+                thumbnail_image_url='https://yhangry.com/wp-content/uploads/2021/11/Wine-1.jpg',
                 title='Menu',
                 text='請選擇類型',
                 actions=[
                     PostbackTemplateAction(
                         label='酒吧',
-                        text='酒吧'
-                        data='A&酒吧'
+                        display_text='酒吧',
+                        data='A酒吧'
                     ),
                     PostbackTemplateAction(
                         label='旅館',
-                        text='旅館'
-                        data='A&旅館'
+                        display_text='旅館',
+                        data='A旅館'
                     ),
                     PostbackTemplateAction(
                         label='全都要',
-                        text='全都要'
-                        data='A&全都要'
-                    ),
+                        display_text='全都要',
+                        data='A全都要'
+                    )
                 ]
             )
         )
-        line_bot_api.reply_message(event.reply_token, buttons_template_message)
-    elif message == '酒吧' or message == '旅館' or message == '全都要':
+            line_bot_api.reply_message(event.reply_token, buttons_template_message)
+
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    if event.postback.data[0:1] == "A":
         bar_or_hotel = event.postback.data[2:]
-        flex_message = TextSendMessage(text='請輸入台北市的任意地區（區或街道），或點擊下列的快捷鍵選擇地區',  # （暫時只能做到有選項，無法自由填入）
+        flex_message = TextSendMessage(text='請輸入台北市的任意地區',  # （暫時只能做到有選項，無法自由填入）
                                        quick_reply=QuickReply(items=[
                                             QuickReplyButton(action=PostbackAction(
                                                 label="中正區", text="中正區", data='B&' + bar_or_hotel + '&中正區')),
@@ -112,9 +114,10 @@ def handle_message(event):
                                             QuickReplyButton(action=PostbackAction(
                                                 label="文山區", text="文山區", data='B&' + bar_or_hotel + '&文山區')),
                                        ]))
-        line_bot_api.reply_message(event.reply_token, flex_message)
-    else:
+        line_bot_api.reply_message(event.reply_token, flex_message)  
+    elif event.postback.data[0:1] == "B":
         result = event.postback.data[2:].split('&')
+
 '''	
 # 蕭
 
