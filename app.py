@@ -79,14 +79,13 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, buttons_template_message)
         else:
             location = event.message.text
-            function(location)		
+            find(location)  # 連接另一個命名find的function		
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
     if event.postback.data[0:1] == "A":
         bar_or_hotel = event.postback.data[2:]
         line_bot_api.reply_message(event.reply_token,TextSendMessage('請輸入捷運站名'))
-    elif event.postback.data[0:1] == "B":
         result = event.postback.data[2:].split('&')
 
 '''	
