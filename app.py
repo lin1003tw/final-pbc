@@ -60,18 +60,18 @@ def handle_message(event):
             alt_text='這個看不到',
             template=ButtonsTemplate(
                 thumbnail_image_url='https://yhangry.com/wp-content/uploads/2021/11/Wine-1.jpg',
-                title='Menu',
+                title='今晚想去哪裡色色？',
                 text='請選擇類型',
                 actions=[
                     PostbackTemplateAction(
                         label='酒吧',
                         display_text='酒吧',
-                        data='bar'
+                        data='Abar'
                     ),
                     PostbackTemplateAction(
                         label='旅館',
                         display_text='旅館',
-                        data='hotel'
+                        data='Ahotel'
                     ),
                 ]
             )
