@@ -76,13 +76,10 @@ def handle_message(event):
                 ]
             )
         )
-            line_bot_api.reply_message(event.reply_token, buttons_template_message)	
-	
-	else:
+            line_bot_api.reply_message(event.reply_token, buttons_template_message)
+        else:
             location = event.message.text
-            find(location)  # 連接另一個命名find的function		
-
-		
+            find(location)  # 連接另一個命名find的function			
 		
 @handler.add(PostbackEvent)
 def handle_postback(event):
