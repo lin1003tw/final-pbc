@@ -66,12 +66,12 @@ def handle_message(event):
                     PostbackTemplateAction(
                         label='酒吧',
                         display_text='酒吧',
-                        data='A酒吧'
+                        data='bar'
                     ),
                     PostbackTemplateAction(
                         label='旅館',
                         display_text='旅館',
-                        data='A旅館'
+                        data='hotel'
                     ),
                 ]
             )
