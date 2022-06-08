@@ -79,7 +79,7 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, buttons_template_message)
         else:
             location = event.message.text
-            find(location)  # 連接另一個命名find的function			
+            find_sex_place(location)  # 連接另一個命名find的function			
 		
 @handler.add(PostbackEvent)
 def handle_postback(event):
@@ -197,7 +197,6 @@ a = find_sex_place(query = result[1], query_type = 'station', place_type = resul
 a.head(5)
 
 #妤文
-#from more options import factorial #看更多選項
 def star_count(rating_num): #依評價顯示星星的函數
     if rating_num >= 4.5:
         "contents":[ 
@@ -346,7 +345,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
         "contents": [
           {
             "type": "text",
-            "text": output.iloc[0]['name']
+            "text": output.iloc[0]['name'], #飯店名
             "weight": "bold",
             "size": "sm",
             "wrap": True
@@ -354,7 +353,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
           {
             "type": "box",
             "layout": "baseline",
-            "contents": star_num(output.iloc[0]['rating']) #還需要匯入評價*
+            "contents": star_num(output.iloc[0]['rating']) #評價
           },
           {
             "type": "box",
@@ -377,7 +376,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
               },
               {
                 "type": "text",
-                "text": output.iloc[0]['business_status'], 
+                "text": output.iloc[0]['business_status'], #營業狀態
                 "wrap": True,
                 "color": "#8c8c8c",
                 "size": "xs",
@@ -417,9 +416,9 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
                 "action": {
                   "type": "message",
                   "label": "我要訂房",
-                  "text": "訂房方式" #跳出訂房方式:線上/電話
-                  handle_message(0)
+                  "text": "訂房方式", #跳出訂房方式:線上/電話
                   "data":result[0], output.iloc[0]['name'] 
+		  order_reply(0)
                 }
               }
             ],
@@ -519,7 +518,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
                   "label": "我要訂房",
                   "text": "我要訂房" #跳出訂房方式:線上/電話
                   "data":result[0], output.iloc[1]['name'] 
-                  handle_message(1)
+                  order_reply(1)
                 }
               }
             ],
@@ -555,7 +554,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
           {
             "type": "box",
             "layout": "baseline",
-            "contents": star_num(output.iloc[2]['rating']) #還需要匯入評價*
+            "contents": star_num(output.iloc[2]['rating']) 
           },
           {
             "type": "box",
@@ -623,7 +622,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
               "label": "我要訂房",
               "text": "我要訂房" #跳出訂房方式:線上/電話
               "data":result[0], output.iloc[2]['name'] 
-              handle_message(2)
+              order_reply(2)
               
             }
           }
