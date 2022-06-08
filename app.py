@@ -185,7 +185,6 @@ def star_count(rating_num): #依評價顯示星星的函數
             ]
 
 #載入LineBot所需要的套件
-import os
 from flask import Flask, request, abort
 
 from linebot import (
