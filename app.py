@@ -649,3 +649,8 @@ def handle_postback(event):
         result = event.postback.data[2:].split('&')  # 心情 & 酒吧/旅館 
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage('請輸入捷運站名'))
+
+# 主程式
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
