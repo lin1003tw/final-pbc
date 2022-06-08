@@ -91,12 +91,10 @@ def handle_message(event):
                                        ]))
         line_bot_api.reply_message(event.reply_token, flex_message)
     else:
-        message = event.message.text
-        result = find_sex_place(message)
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text=result))
+        location = event.message.text  # 捷運站在message裡
+        result = three_handle_message_1(location)
 
-
+# 回傳心情之後
 @handler.add(PostbackEvent)
 def handle_postback(event):
     if event.postback.data[0:1] == "A":
@@ -124,7 +122,7 @@ def handle_postback(event):
         line_bot_api.reply_message(event.reply_token, buttons_template_message)
     elif event.postback.data[0:1] == "B":
         place_type = event.postback.data[4:]
-        result = event.postback.data[2:].split('&')
+        result = event.postback.data[2:].split('&')  # 心情 & 酒吧/旅館 
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage('請輸入捷運站名'))
 
@@ -138,18 +136,17 @@ google_key = 'AIzaSyB74lRYR0Y-8FGxnFAoW0V8Wv6GEcKmbr8' # fill in your google map
 gmaps = googlemaps.Client(key=google_key)
 
 # In[61]:
-
+# 轉日期
 from io import BytesIO
 from PIL import Image
 def time_transform(row):
     if pd.isna(row):
         return {}
     return row['weekday_text']
-
+轉圖檔
 def image_transform(row):
+    # print(row)
     b = row[0]['photo_reference']
-    photo = gmaps.places_photo(photo_reference = b, max_width=800, max_height=800)
-    photo
     f = BytesIO()
     for chunk in gmaps.places_photo(photo_reference = b, max_width=800, max_height=800):
         if chunk:
@@ -159,10 +156,8 @@ def image_transform(row):
 
 
 # In[62]:
-
-
-def find_sex_place(query: str, query_type: str, place_type: str):
-    if query_type == 'station':
+def find_sex_place(query: str, place_type: str):
+    if place_type == 'bar':
         ids = []
         results = []
         # Geocoding an address
@@ -174,68 +169,46 @@ def find_sex_place(query: str, query_type: str, place_type: str):
             time.sleep(2)
             query_result = gmaps.places_nearby(page_token=query_result['next_page_token'])
             results.extend(query_result['results'])
-        #print(f'Number of bars in {query}: {len(results)} (maximum: 60)')
+        print(f'Number of bars in {query}: {len(results)} (maximum: 60)')
         for place in results:
             ids.append(place['place_id'])
         stores_info = []
-        ids = list(set(ids)) 
         for id in ids:
             stores_info.append(gmaps.place(place_id=id, language='zh-TW')['result'])
-        #print(f'Total number of bars: {len(stores_info)}')
+        print(f'Total number of bars: {len(stores_info)}')
         taipei_bar = pd.DataFrame.from_dict(stores_info)
         taipei_bar['score'] = taipei_bar['rating'] * taipei_bar['user_ratings_total']
         bar_df = taipei_bar.sort_values('score', ascending=False).head(15)
         bar_df['營業時間'] = bar_df['opening_hours'].apply(time_transform)
         bar_df['圖片'] = bar_df['photos'].apply(image_transform)
-        
+        if place_type == 'bar':
+            return bar_df
+    
+    if place_type == 'hotel':
         ids = []
         results = []
+        geocode_result = gmaps.geocode(query)
+        loc = geocode_result[0]['geometry']['location']
         query_result = gmaps.places_nearby(type='lodging',location=loc, radius=1000)
         results.extend(query_result['results'])
         while query_result.get('next_page_token'):
             time.sleep(2)
             query_result = gmaps.places_nearby(page_token=query_result['next_page_token'])
             results.extend(query_result['results'])
-        #print(f'Number of hotels in {query}: {len(results)} (maximum: 60)')
+        print(f'Number of hotels in {query}: {len(results)} (maximum: 60)')
         for place in results:
             ids.append(place['place_id'])
         stores_info = []
-        ids = list(set(ids)) 
         for id in ids:
             stores_info.append(gmaps.place(place_id=id, language='zh-TW')['result'])
-        #print(f'Total number of hotels: {len(stores_info)}')
+        print(f'Total number of hotels: {len(stores_info)}')
         taipei_hotel = pd.DataFrame.from_dict(stores_info)
         taipei_hotel['score'] = taipei_hotel['rating'] * taipei_hotel['user_ratings_total']
         hotel_df = taipei_hotel.sort_values('score', ascending=False).head(15)
         hotel_df['營業時間'] = hotel_df['opening_hours'].apply(time_transform)
         hotel_df['圖片'] = hotel_df['photos'].apply(image_transform)
-    else:
-        stores_info = gmaps.places(query, language='zh-TW', type='bar')['results']
-        #print(f'Total number of bars: {len(stores_info)}')
-        taipei_bar = pd.DataFrame.from_dict(stores_info)
-        taipei_bar['score'] = taipei_bar['rating'] * taipei_bar['user_ratings_total']
-        bar_df = taipei_bar.sort_values('score', ascending=False).head(15)
-        bar_df['營業時間'] = bar_df['opening_hours'].apply(time_transform)
-        bar_df['圖片'] = bar_df['photos'].apply(image_transform)
-        
-        stores_info = gmaps.places(query, language='zh-TW', type='lodging')['results']
-        #print(f'Total number of hotels: {len(stores_info)}')
-        taipei_hotel = pd.DataFrame.from_dict(stores_info)
-        taipei_hotel['score'] = taipei_hotel['rating'] * taipei_hotel['user_ratings_total']
-        hotel_df = taipei_hotel.sort_values('score', ascending=False).head(15)
-        hotel_df['營業時間'] = hotel_df['opening_hours'].apply(time_transform)
-        hotel_df['圖片'] = hotel_df['photos'].apply(image_transform)
-        
-    if place_type == 'A&bar':
-        return bar_df
-    elif place_type == 'A&hotel':
-        return hotel_df
-    return pd.concat([bar_df, hotel_df])
-
-
-# In[63]:
-a = find_sex_place(query = result[1], query_type = 'station', place_type = result[0])
-a.head(5)
+        if place_type == 'hotel':
+            return hotel_df
 
 #妤文
 def star_count(rating_num): #依評價顯示星星的函數
@@ -340,12 +313,15 @@ def star_count(rating_num): #依評價顯示星星的函數
               }
             ]
 		
-def callback():
+# def callback():
 # get X-Line-Signature header value
-    signature = request.headers['X-Line-Signature']
+    #signature = request.headers['X-Line-Signature']
 # get request body as text body = request.get_data(as_text=True) app.logger.info("Request body: " + body) # handle webhook body try:     handler.handle(body, signature) except InvalidSignatureError:     abort(400) return 'OK'
 # 訊息傳遞區塊
 # 基本上程式編輯都在這個function
+
+
+# 我要訂房
 @handler.add(MessageEvent, message=TextMessage)
 def order_reply(rank): #選擇訂房方式
     message = text = event.message.text
@@ -356,17 +332,20 @@ def order_reply(rank): #選擇訂房方式
                                 QuickReplyButton(action=MessageAction(label="線上預訂", text=output.iloc[rank]['website'])),
                             ]))
         line_bot_api.reply_message(event.reply_token, flex_message)
-    else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
         
-@handler.add(MessageEvent, message=TextMessage)
+# @handler.add(MessageEvent, message=TextMessage)
 def three_handle_message_1(event): #推薦三個旅館/酒吧
-    output = find_sex_place(query=result[1], query_type='station', place_type=result[0]),
+    output = find_sex_place(location, place_type) # place_type = hotel/bar(result[1])
     message = text=event.message.text
-     #if re.match('告訴我秘密',message):
-         # Flex Message Simulator網頁：https://developers.line.biz/console/fx/
+    Flex Message Simulator網頁：https://developers.line.biz/console/fx/
+         flex_message = FlexSendMessage(
+             #alt_text='行銷搬進大程式',
+	
+     #if re.match('告訴我秘密',message),
+     # Flex Message Simulator網頁：https://developers.line.biz/console/fx/
          #flex_message = FlexSendMessage(
              #alt_text='行銷搬進大程式',
+	
     contents={
     "type": "carousel",
     "contents": [
@@ -447,7 +426,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
                 "action": {
                   "type": "uri",
                   "label": "看更多",
-                  "uri": "https://linecorp.com" #網址01*
+                  "uri": output.iloc[0]['url']  #網址01*
                 }
               },
               {
@@ -458,7 +437,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
                   "type": "message",
                   "label": "我要訂房",
                   "text": "訂房方式", #跳出訂房方式:線上/電話
-                  "data":result[0], output.iloc[0]['name'] 
+                  "data":place_type, output.iloc[0]['url'] 
 		  order_reply(0)
                 }
               }
@@ -547,7 +526,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
                 "action": {
                   "type": "uri",
                   "label": "看更多",
-                  "uri": "https://linecorp.com"
+                  "uri": output.iloc[1]['url']
                 }
               },
               {
@@ -558,7 +537,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
                   "type": "message",
                   "label": "我要訂房",
                   "text": "我要訂房" #跳出訂房方式:線上/電話
-                  "data":result[0], output.iloc[1]['name'] 
+                  "data":place_type, output.iloc[1]['url'] 
                   order_reply(1)
                 }
               }
@@ -651,7 +630,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
             "action": {
               "type": "uri",
               "label": "看更多",
-              "uri": "https://linecorp.com"
+              "uri": output.iloc[2]['url']
             }
           },
           {
@@ -662,7 +641,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
               "type": "message",
               "label": "我要訂房",
               "text": "我要訂房" #跳出訂房方式:線上/電話
-              "data":result[0], output.iloc[2]['name'] 
+              # "data": place_type, output.iloc[2]['url'] 
               order_reply(2)
               
             }
@@ -674,7 +653,7 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
     ]
 } #json
          line_bot_api.reply_message(event.reply_token, flex_message)
-         result = event.postback.data
+         #result = event.postback.data
 '''
 # 効 Review Part
 
