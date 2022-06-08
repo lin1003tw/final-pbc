@@ -15,7 +15,7 @@ def time_transform(row):
     if pd.isna(row):
         return {}
     return row['weekday_text']
-轉圖檔
+# 轉圖檔
 def image_transform(row):
     # print(row)
     b = row[0]['photo_reference']
