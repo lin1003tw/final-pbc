@@ -55,26 +55,53 @@ def callback():
 @handler.add(FollowEvent)
 def handle_follow(event):
     buttons_template_message = TemplateSendMessage(
-    alt_text='這個看不到',
-    template=ButtonsTemplate(
-        thumbnail_image_url='https://www.posist.com/restaurant-times/wp-content/uploads/2017/04/neon-170182_1920-768x510.jpg',
-        title='今晚去哪瑟瑟',
-        text='幫你找到最適合的酒吧或旅館，度過激情四射的夜生活！',
-        actions=[
-            MessageAction(
-                label='點我開始',
-                text='開始'
-            )
-        ]
+        alt_text='這個看不到',
+        template=ButtonsTemplate(
+            thumbnail_image_url='https://www.posist.com/restaurant-times/wp-content/uploads/2017/04/neon-170182_1920-768x510.jpg',
+            title='今晚去哪瑟瑟',
+            text='幫你找到最適合的酒吧或旅館，度過激情四射的夜生活！',
+            actions=[
+                MessageAction(
+                    label='點我開始！',
+                    text='開始'
+                )
+            ]
+        )
     )
-)
-    line_bot_api.reply_message(event.reply_token, buttons_template_message)	
-	
+    line_bot_api.reply_message(event.reply_token, buttons_template_message)
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    if isinstance(event, MessageEvent):
-        if event.message.text == "開始":
-            buttons_template_message = TemplateSendMessage(
+    if event.message.text == "開始":
+        flex_message = TextSendMessage(text='請選擇此刻的心情吧~',
+                                       quick_reply=QuickReply(items=[
+                                           QuickReplyButton(action=PostbackAction(
+                                               label="歡樂", text="歡樂", data='A&歡樂')),
+                                           QuickReplyButton(action=PostbackAction(
+                                               label="憂鬱", text="憂鬱", data='A&憂鬱')),
+                                           QuickReplyButton(action=PostbackAction(
+                                               label="低調", text="低調", data='A&低調')),
+                                           QuickReplyButton(action=PostbackAction(
+                                               label="奢侈", text="奢侈", data='A&奢侈')),
+                                           QuickReplyButton(action=PostbackAction(
+                                               label="活力", text="活力", data='A&活力')),
+                                           QuickReplyButton(action=PostbackAction(
+                                               label="慵懶", text="慵懶", data='A&慵懶'))
+                                       ]))
+        line_bot_api.reply_message(event.reply_token, flex_message)
+    else:
+        message = event.message.text
+        result = location(message)
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text=result))
+
+
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    if event.postback.data[0:1] == "A":
+        mood = event.postback.data[2:]
+        buttons_template_message = TemplateSendMessage(
             alt_text='這個看不到',
             template=ButtonsTemplate(
                 thumbnail_image_url='https://yhangry.com/wp-content/uploads/2021/11/Wine-1.jpg',
@@ -84,27 +111,21 @@ def handle_message(event):
                     PostbackTemplateAction(
                         label='酒吧',
                         display_text='酒吧',
-                        data='A&bar'
+                        data='B&bar'
                     ),
                     PostbackTemplateAction(
                         label='旅館',
                         display_text='旅館',
-                        data='A&hotel'
+                        data='B&hotel'
                     ),
                 ]
             )
         )
-            line_bot_api.reply_message(event.reply_token, buttons_template_message)
-        else:
-            location = event.message.text
-            find_sex_place(location)  # 連接另一個命名find的function			
-		
-@handler.add(PostbackEvent)
-def handle_postback(event):
-    if event.postback.data[0:1] == "A":
-        bar_or_hotel = event.postback.data[2:]
-        line_bot_api.reply_message(event.reply_token,TextSendMessage('請輸入捷運站名'))
-        result = event.postback.data[2:].split('&')
+        line_bot_api.reply_message(event.reply_token, buttons_template_message)
+    elif event.postback.data[0:1] == "B":
+        place_type = event.postback.data[2:]
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage('請輸入捷運站名'))
 
 
 	
