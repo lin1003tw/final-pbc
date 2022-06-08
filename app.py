@@ -677,7 +677,23 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
          result = event.postback.data
 '''
 # 効 Review Part
-# input
+
+# 讀檔
+import csv
+
+# 飯店谷歌地圖uri
+file = open('Taipei_Hotels.csv') ＃hotel 資料檔案名稱
+reader = csv.reader(file)
+data_list = list(reader)
+file.close()
+
+# 酒吧谷歌地圖uri
+file1 = open('Taipei_Bars.csv') ＃bar 資料檔案名稱
+reader1 = csv.reader(file1)
+data_list1 = list(reader1)
+file1.close()
+
+# -----------------------------------------------------------------------------------------------
 
 # 心情標籤 Dict
 mood_dict ={0:'歡樂', 1:'憂鬱', 2:'低調', 3:'奢侈', 4:'活力', 5:'慵懶'}
@@ -692,7 +708,7 @@ for mood in range(6): # 假設有六種心情
 # hotels 1371間，編號0-1370
 hotel_list = []
 
-for hotel in range(1514):
+for hotel in range(1370):
 	hotel_list.append([hotel, mood_list])
 
 # bars 1513間，編號0-1512
@@ -703,9 +719,12 @@ for bar in range(1514):
 
 # 三個變數都是系統要自動記錄
 
+hotel_esite = 
+bar_esite = 
+
 where = int(input()) # 0 for hotels(預設), 1 for bars, others for both，系統要在使用者去了飯店或酒吧後紀錄他去了哪裡
-hotel = int(input()) # hotel 編號，系統紀錄使用者去了哪間飯店
-bar = int(input()) # bar 編號，系統紀錄使用者去了哪間酒吧，沒去就隨便紀
+hotel = data_list.index(hotel_esite) # hotel 編號(在csv裡的位置就剛好是編號)，系統紀錄使用者去了哪間飯店
+bar = data_list1.index(bar_esite) # bar 編號(在csv裡的位置就剛好是編號)，系統紀錄使用者去了哪間酒吧，沒去就隨便紀
 
 
 
@@ -849,6 +868,7 @@ else: # 去了飯店＋酒吧
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
 
+# 有無評論，機器人給予的回饋不同
 if answer_more_than_one >= 1:
     line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='感謝您的回答'))
 else:
