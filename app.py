@@ -654,7 +654,6 @@ def three_handle_message_1(event): #推薦三個旅館/酒吧
 } #json
          line_bot_api.reply_message(event.reply_token, flex_message)
          #result = event.postback.data
-'''
 # 効 Review Part
 
 # 讀檔
@@ -663,19 +662,20 @@ import csv
 # 飯店谷歌地圖uri
 file = open('Taipei_Hotels.csv') ＃hotel 資料檔案名稱
 reader = csv.reader(file)
-data_list = list(reader)
+data_list_h = list(reader)
 file.close()
 
 # 酒吧谷歌地圖uri
 file1 = open('Taipei_Bars.csv') ＃bar 資料檔案名稱
 reader1 = csv.reader(file1)
-data_list1 = list(reader1)
+data_list_b = list(reader1)
 file1.close()
 
 # -----------------------------------------------------------------------------------------------
 
 # 心情標籤 Dict
-mood_dict ={0:'歡樂', 1:'憂鬱', 2:'低調', 3:'奢侈', 4:'活力', 5:'慵懶'}
+mood_dict = {'歡樂':0, '憂鬱':1, '低調':2, '奢侈':3, '活力':4, '慵懶':5, '略過':999}
+mood_dict_r = {0:'歡樂', 1:'憂鬱', 2:'低調', 3:'奢侈', 4:'活力', 5:'慵懶', 999:'略過'}
 
 # 以每間 hotels & bars 編號，建list
 # 心情類別[評論數(預設為0),心情編號(0-5)] list
@@ -701,158 +701,67 @@ for bar in range(1514):
 hotel_esite = 
 bar_esite = 
 
-where = int(input()) # 0 for hotels(預設), 1 for bars, others for both，系統要在使用者去了飯店或酒吧後紀錄他去了哪裡
-hotel = data_list.index(hotel_esite) # hotel 編號(在csv裡的位置就剛好是編號)，系統紀錄使用者去了哪間飯店
-bar = data_list1.index(bar_esite) # bar 編號(在csv裡的位置就剛好是編號)，系統紀錄使用者去了哪間酒吧，沒去就隨便紀
+# where = int(input()) # 0 for hotels, 1 for bars, 系統要在使用者去了飯店或酒吧後紀錄他去了哪裡
+if place_type == 'hotel':
+    where = 0
+else:
+    where = 1
 
-
+hotel = data_list_h.index(hotel_esite) # hotel 編號(在csv裡的位置就剛好是編號)，系統紀錄使用者去了哪間飯店
+bar = data_list_b.index(bar_esite) # bar 編號(在csv裡的位置就剛好是編號)，系統紀錄使用者去了哪間酒吧，沒去就隨便紀
 
 # operation 評論紀錄系統
 answer_more_than_one = 0
-mood_review_h = 999
-mood_review_b = 999
-line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='評論可以拿優惠券喔'))
+mood_review_h = '999'
+mood_review_b = '999'
 
-# 因為Line Bot 有限制選項數目，所以拆成兩倆＋略過，共三組選項問使用者
+print('評論可以拿優惠券喔!')
+
+# 拆成兩倆＋略過，共三組選項問使用者
 if where == 0: # 只去了飯店
 
-# 三組心情選項
-    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
-        line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3', TemplateSendMessage(
-            alt_text = '給一組心情選項',
-            template = ButtonsTemplate(
-                text = '這間飯店給你的感覺偏向？',
-                action = [
-                    PostbackTemplateAction(
-                        label = mood_dict[times],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = 0
-                    ),
-                    PostbackTemplateAction(
-                        label = mood_dict[times + 1],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = 1
-                    ),
-                    PostbackTemplateAction(
-                        label = '略過',
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = 999
-                    ),
-                ]
-            )
-        )
+# 問心情
+    for i in range(0, 4, 2):
+	m1 = mood_dict_r[i]
+	m2 = mood_dict_r[i + 1]
+        print(f'請問這間飯店給你的感覺偏向？請輸入{m1}、{m2}或略過') # 使用f-strings
+	
+        answer = str(input()) # 使用者輸入問題中兩個心情之一，或略過
+        mood_review_h = mood_dict[answer]
+	
 
-        if mood_review_h < 6: # if 要評論， mood_review 只會有0-5的 int
+        if mood_review_h < (i + 2) and mood_review_h > (i - 1): # if 要評論， mood_review 只會有問題中的兩種之一，其他的都不列入計算
             hotel_list[hotel][1][mood_review_h][0] += 1
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
+        else:
+	    print('拜託給個回饋嘛！')
 
 elif where == 1: # 只去了酒吧
 
-# 三組心情選項
-    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
-        line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3', TemplateSendMessage(
-            alt_text = '給一組心情選項',
-            template = ButtonsTemplate(
-                text = '這間酒吧給你的感覺偏向？',
-                action = [
-                    PostbackTemplateAction(
-                        label = mood_dict[times],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = times 
-                    ),
-                    PostbackTemplateAction(
-                        label = mood_dict[times + 1],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = times + 1
-                    ),
-                    PostbackTemplateAction(
-                        label = '略過',
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = 999
-                    ),
-                ]
-            )
-        )
+    for i in range(0, 4, 2):
+	m1 = mood_dict_r[i]
+	m2 = mood_dict_r[i + 1]
+        print(f'請問這間飯店給你的感覺偏向？請輸入{m1}、{m2}或略過') # 使用f-strings
+	
+        answer = str(input()) # 回答問題中兩個心情之一，或略過
+        mood_review_b = mood_dict[answer]
+	
 
-
-        if mood_review_b < 6: # if 要評論， mood_review 只會有0-5的 int
+        if mood_review_b < (i + 2) and mood_review_ > (i - 1): # if 要評論， mood_review 只會有問題中的兩種之一，其他的都不列入計算
             bar_list[bar][1][mood_review_b][0] += 1
             answer_more_than_one += 1
             # 使用者編號下的貢獻分數加一，還沒寫
+        else:
+	    print('拜託給個回饋嘛！')
 
-
-else: # 去了飯店＋酒吧
-
-# 三組心情選項
-    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
-        line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3', TemplateSendMessage(
-            alt_text = '給一組心情選項',
-            template = ButtonsTemplate(
-                text = '這間飯店給你的感覺偏向？',
-                action = [
-                    PostbackTemplateAction(
-                        label = mood_dict[times],
-                        display_text = '', #看有沒有要回覆訊息
-                        mood_review_h = times
-                    ),
-                    PostbackTemplateAction(
-                        label = mood_dict[times + 1],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = times + 1
-                    ),
-                    PostbackTemplateAction(
-                        label = '略過',
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = 999
-                    ),
-                ]
-            )
-        )
-
-        if mood_review_h < 6: # if 要評論， mood_review 只會有0-5的 int
-            hotel_list[hotel][1][mood_review_h][0] += 1
-            answer_more_than_one += 1
-            # 使用者編號下的貢獻分數加一，還沒寫
-
-# 三組心情選項
-    for times in range(0, 4, 2): # range 內的數字要跟著心情有幾種調整
-        line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3', TemplateSendMessage(
-            alt_text = '給一組心情選項',
-            template = ButtonsTemplate(
-                text = '這間酒吧給你的感覺偏向？',
-                action = [
-                    PostbackTemplateAction(
-                        label = mood_dict[times],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = times
-                    ),
-                    PostbackTemplateAction(
-                        label = mood_dict[times + 1],
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = times + 1
-                    ),
-                    PostbackTemplateAction(
-                        label = '略過',
-                        text = '', #看有沒有要回覆訊息
-                        mood_review_h = 999
-                    ),
-                ]
-            )
-        )
-
-
-        if mood_review_b < 6: # if 要評論， mood_review 只會有0-5的 int
-            bar_list[bar][1][mood_review_b][0] += 1
-            answer_more_than_one += 1
-            # 使用者編號下的貢獻分數加一，還沒寫
 
 # 有無評論，機器人給予的回饋不同
 if answer_more_than_one >= 1:
-    line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='感謝您的回答'))
+    print('感謝您的回答')
 else:
-    line_bot_api.push_message('Ud6ce2036c8854221694d3f33b3b796c3',TextSendMessage(text='下次記得評論喔！'))
-'''
+    print('下次記得評論喔！')
+
 # 主程式
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
