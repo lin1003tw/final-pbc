@@ -91,9 +91,9 @@ def handle_message(event):
                                                label="慵懶", text="慵懶", data='A&慵懶'))
                                        ]))
         line_bot_api.reply_message(event.reply_token, flex_message)
-    else:
+    elif event.message.text == "大安站":
         carousel_template_message = TemplateSendMessage(
-            alt_text='免費教學影片',
+            alt_text='大安站',
             template=CarouselTemplate(
                 columns=[
                     CarouselColumn(
